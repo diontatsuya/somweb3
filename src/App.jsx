@@ -25,14 +25,13 @@ const client = createPublicClient({
   transport: http()
 });
 
-// Ganti dengan alamat kontrak domain registry dari Somnia Testnet
 const DOMAIN_CONTRACT_ADDRESS = "0xF390f308B1Cf93e7AbB1FDa86B3c4A94aB2EfB75";
 const DOMAIN_ABI = parseAbi([
   "function getName(address owner) view returns (string)"
 ]);
 
 export default function App() {
-  const { ready, authenticated, login, logout, user } = usePrivy();
+  const { ready, authenticated, login, logout } = usePrivy();
   const { wallets } = useWallets();
   const [balance, setBalance] = useState(null);
   const [domain, setDomain] = useState(null);
@@ -63,26 +62,43 @@ export default function App() {
     fetchData();
   }, [address]);
 
-  if (!ready) return <p>Loading...</p>;
+  if (!ready)
+    return (
+      <div className="text-white bg-black h-screen flex items-center justify-center text-2xl">
+        Loading game interface...
+      </div>
+    );
 
   return (
-    <main className="p-4 text-center">
-      <h1 className="text-2xl font-bold mb-4">Somnia Testnet dApp</h1>
+    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-green-400 font-mono p-6">
+      <div className="max-w-xl mx-auto border border-green-500 p-6 rounded-xl bg-black/60 shadow-xl backdrop-blur-sm">
+        <h1 className="text-3xl font-bold mb-6 text-center border-b border-green-600 pb-2">
+          🎮 Somnia Web3 Console
+        </h1>
 
-      {!authenticated ? (
-        <button onClick={login} className="bg-blue-500 text-white px-4 py-2 rounded">
-          Login with Privy
-        </button>
-      ) : (
-        <div className="space-y-4">
-          {domain && <h2 className="text-xl font-semibold">👤 {domain}</h2>}
-          <p>💼 Wallet Address: <code>{address}</code></p>
-          {balance !== null && <p>💰 Balance: {balance.toFixed(4)} STT</p>}
-          <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded">
-            Logout
+        {!authenticated ? (
+          <button
+            onClick={login}
+            className="w-full bg-green-700 hover:bg-green-600 text-white py-3 rounded text-xl"
+          >
+            Connect to Somnia
           </button>
-        </div>
-      )}
-    </main>
+        ) : (
+          <div className="space-y-4">
+            <div className="bg-gray-900 p-4 rounded border border-green-600">
+              <p className="text-lg">👤 Identity: <strong>{domain || "-"}</strong></p>
+              <p>💼 Wallet: <code className="break-words">{address}</code></p>
+              <p>💰 STT Balance: <strong>{balance?.toFixed(4) ?? "..."}</strong></p>
+            </div>
+            <button
+              onClick={logout}
+              className="w-full bg-red-700 hover:bg-red-600 text-white py-3 rounded text-xl"
+            >
+              Log Out
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
