@@ -1,33 +1,31 @@
 // src/App.jsx
 import { useEffect, useState } from "react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { createPublicClient, http } from "viem";
-import { defineChain } from "viem/chains";
-import { parseAbi } from "viem";
+import { createPublicClient, http, parseAbi } from "viem";
 
-const somniaTestnet = defineChain({
+const somniaTestnet = {
   id: 50312,
-  name: 'Somnia Testnet',
+  name: "Somnia Testnet",
   nativeCurrency: {
-    name: 'Somnia Token',
-    symbol: 'STT',
+    name: "Somnia Token",
+    symbol: "STT",
     decimals: 18,
   },
   rpcUrls: {
     default: {
-      http: ['https://dream-rpc.somnia.network']
+      http: ["https://dream-rpc.somnia.network"],
     },
   },
-});
+};
 
 const client = createPublicClient({
   chain: somniaTestnet,
-  transport: http()
+  transport: http(),
 });
 
 const DOMAIN_CONTRACT_ADDRESS = "0xF390f308B1Cf93e7AbB1FDa86B3c4A94aB2EfB75";
 const DOMAIN_ABI = parseAbi([
-  "function getName(address owner) view returns (string)"
+  "function getName(address owner) view returns (string)",
 ]);
 
 export default function App() {
@@ -36,7 +34,9 @@ export default function App() {
   const [balance, setBalance] = useState(null);
   const [domain, setDomain] = useState(null);
 
-  const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
+  const embeddedWallet = wallets.find(
+    (w) => w.walletClientType === "privy"
+  );
   const address = embeddedWallet?.address;
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function App() {
           address: DOMAIN_CONTRACT_ADDRESS,
           abi: DOMAIN_ABI,
           functionName: "getName",
-          args: [address]
+          args: [address],
         });
         setDomain(name);
       } catch (err) {
@@ -86,9 +86,17 @@ export default function App() {
         ) : (
           <div className="space-y-4">
             <div className="bg-gray-900 p-4 rounded border border-green-600">
-              <p className="text-lg">👤 Identity: <strong>{domain || "-"}</strong></p>
-              <p>💼 Wallet: <code className="break-words">{address}</code></p>
-              <p>💰 STT Balance: <strong>{balance?.toFixed(4) ?? "..."}</strong></p>
+              <p className="text-lg">
+                👤 Identity: <strong>{domain || "-"}</strong>
+              </p>
+              <p>
+                💼 Wallet:{" "}
+                <code className="break-words">{address}</code>
+              </p>
+              <p>
+                💰 STT Balance:{" "}
+                <strong>{balance?.toFixed(4) ?? "..."}</strong>
+              </p>
             </div>
             <button
               onClick={logout}
