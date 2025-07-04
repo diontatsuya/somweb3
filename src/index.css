@@ -1,0 +1,23 @@
+/* src/index.css */
+.console {
+  font-family: "Courier New", Courier, monospace;
+  background-color: #0a0a0a;
+  color: #00ffcc;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  margin: 3rem auto;
+  box-shadow: 0 0 12px #00ffcc33;
+}
+
+button {
+  background-color: #00ffcc;
+  border: none;
+  color: #0a0a0a;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
