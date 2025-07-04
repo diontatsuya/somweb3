@@ -53,11 +53,7 @@ export default function App() {
       <p>💼 Wallet: {walletAddress}</p>
       <p>
         💰 STT Balance:{" "}
-        {loadingBalance ? (
-          <span>Loading...</span>
-        ) : (
-          <span>{sttBalance}</span>
-        )}
+        {loadingBalance ? <span>Loading...</span> : <span>{sttBalance}</span>}
       </p>
       <button onClick={logout}>Log Out</button>
     </div>
