@@ -1,8 +1,8 @@
-// src/App.jsx
 import { useEffect, useState } from "react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { createPublicClient, http, parseAbi } from "viem";
 
+// Konfigurasi jaringan Somnia Testnet
 const somniaTestnet = {
   id: 50312,
   name: "Somnia Testnet",
@@ -23,6 +23,7 @@ const client = createPublicClient({
   transport: http(),
 });
 
+// ABI dan alamat kontrak domain
 const DOMAIN_CONTRACT_ADDRESS = "0xF390f308B1Cf93e7AbB1FDa86B3c4A94aB2EfB75";
 const DOMAIN_ABI = parseAbi([
   "function getName(address owner) view returns (string)",
@@ -31,22 +32,25 @@ const DOMAIN_ABI = parseAbi([
 export default function App() {
   const { ready, authenticated, login, logout } = usePrivy();
   const { wallets } = useWallets();
+
   const [balance, setBalance] = useState(null);
   const [domain, setDomain] = useState(null);
 
-  const embeddedWallet = wallets.find(
-    (w) => w.walletClientType === "privy"
-  );
-  const address = embeddedWallet?.address;
+  // Gunakan wallet pertama yang tersedia (lebih fleksibel)
+  const address = wallets.length > 0 ? wallets[0].address : null;
+
+  // Debug log
+  console.log("Wallets:", wallets);
+  console.log("Selected Address:", address);
 
   useEffect(() => {
     if (!address) return;
 
     async function fetchData() {
-      const bal = await client.getBalance({ address });
-      setBalance(Number(bal) / 1e18);
-
       try {
+        const bal = await client.getBalance({ address });
+        setBalance(Number(bal) / 1e18);
+
         const name = await client.readContract({
           address: DOMAIN_CONTRACT_ADDRESS,
           abi: DOMAIN_ABI,
@@ -55,6 +59,7 @@ export default function App() {
         });
         setDomain(name);
       } catch (err) {
+        console.error("Error fetching data:", err);
         setDomain(null);
       }
     }
@@ -85,13 +90,18 @@ export default function App() {
           </button>
         ) : (
           <div className="space-y-4">
+            {wallets.length === 0 && (
+              <p className="text-yellow-400">
+                ⚠️ Wallet belum tersambung. Silakan sambungkan wallet.
+              </p>
+            )}
             <div className="bg-gray-900 p-4 rounded border border-green-600">
               <p className="text-lg">
                 👤 Identity: <strong>{domain || "-"}</strong>
               </p>
               <p>
                 💼 Wallet:{" "}
-                <code className="break-words">{address}</code>
+                <code className="break-words">{address || "-"}</code>
               </p>
               <p>
                 💰 STT Balance:{" "}
